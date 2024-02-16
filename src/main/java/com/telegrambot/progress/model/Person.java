@@ -24,8 +24,7 @@ public class Person {
     @JoinColumn(name = "chat_id")
     private List<Goal> goals;
 
-    @OneToMany
-    @JoinColumn(name = "chat_id")
+    @OneToMany(mappedBy = "person")
     private List<Achievement> achievements;
 
     public void addGoals(List<Goal> goals) {
