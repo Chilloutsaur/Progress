@@ -1,7 +1,9 @@
 package com.telegrambot.progress.service;
 
+import com.telegrambot.progress.model.Achievement;
 import com.telegrambot.progress.model.Goal;
 import com.telegrambot.progress.model.Person;
+import com.telegrambot.progress.repository.AchievementDao;
 import com.telegrambot.progress.repository.AchievementRepository;
 import com.telegrambot.progress.repository.GoalRepository;
 import com.telegrambot.progress.repository.PersonRepository;
@@ -18,6 +20,7 @@ public class ProgressService {
     private final AchievementRepository achievementRepository;
     private final PersonRepository personRepository;
     private final GoalRepository goalRepository;
+    private final AchievementDao achievementDao;
 
     public void createPerson(Long chatId, String username) {
         if (personRepository.findById(chatId).isEmpty()) {
@@ -34,7 +37,12 @@ public class ProgressService {
     }
 
     public void addAchievement(Long chatId, LocalDateTime date, Long goalId) {
-        achievementRepository.add(chatId, date, goalId);
+        Optional<Person> person = personRepository.findById(chatId);
+        Optional<Goal> goal = goalRepository.findById(goalId);
+        if (person.isPresent() && goal.isPresent()) {
+            achievementRepository.save(new Achievement(date,goal.get(), person.get()));
+        }
+
     }
 
     public List<Goal> getCompletedGoalsByDate(Long chatId, LocalDateTime date) {

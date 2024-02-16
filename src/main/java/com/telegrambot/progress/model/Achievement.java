@@ -23,4 +23,13 @@ public class Achievement {
     @OneToOne
     @JoinColumn(name = "goal_id", referencedColumnName = "id")
     private Goal goal;
+
+    @ManyToOne
+    private Person person;
+
+    public Achievement(LocalDateTime date, Goal goal, Person person) {
+        this.date = date;
+        this.goal = goal;
+        this.person = person;
+    }
 }
