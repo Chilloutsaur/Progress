@@ -14,6 +14,10 @@ public class Goal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    public Goal(String name) {
+        this.name = name;
+    }
+
     private String name;
 
     private String description;

@@ -1,6 +1,7 @@
 package com.telegrambot.progress.service;
 
 import com.telegrambot.progress.config.BotConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -9,10 +10,16 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
+@Slf4j
 public class TelegramBot extends TelegramLongPollingBot {
 
     @Autowired
     BotConfig config;
+
+    @Autowired
+    ProgressService progressService;
+
+
 
     @Override
     public String getBotUsername() {
@@ -32,6 +39,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             long chatId = update.getMessage().getChatId();
 
             switch (messageText) {
+
                 case "/start":
                     startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
                     break;
@@ -42,6 +50,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void startCommandReceived(long chatId, String name) {
         String answer = name + " ввёл команду /start";
+        log.info("Replied to user " + name);
+        progressService.createPerson(chatId, name);
         sendMessage(chatId, answer);
     }
 
@@ -52,7 +62,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-
+            log.error("Error occurred: " + e.getMessage());
         }
     }
 

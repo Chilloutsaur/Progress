@@ -1,25 +1,33 @@
 package com.telegrambot.progress.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class Person {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id()
+    @Column(name = "chat_id")
     private Long chatId;
 
     private String name;
 
-    private Timestamp registeredAt;
+    private LocalDateTime registeredAt;
 
-    @OneToMany(mappedBy = "person")
+    @OneToMany(mappedBy = "person",  fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Goal> goals;
+
+    public void addGoals(List<Goal> goals){
+        this.goals.addAll(goals);
+    }
+
+
 }
